@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Mover a plataforma com o dedo/mouse
-    // Esta função é chamada apenas pelo pointermove do document, que já verifica isPaddleBeingDragged
+    // Esta função é chamada pelos listeners de pointermove e pointerdown
     function movePaddle(event) {
         // Posição X do centro da plataforma em relação à tela
         let newPaddleX = event.clientX - gameArea.getBoundingClientRect().left - PADDLE_WIDTH / 2;
@@ -240,6 +240,41 @@ Feliz dia dos namorados meu amor❤️
             // O jogo estará pronto para ser iniciado novamente
         }, 600); // Espera a animação de fechamento da carta
     });
+
+
+    // --- NOVA LÓGICA DE CONTROLE DA PLATAFORMA ---
+    // Listener para quando o ponteiro (mouse ou dedo) é pressionado na ÁREA DO JOGO
+    gameArea.addEventListener('pointerdown', (e) => {
+        if (isGameActive) { // Só permite arrastar se o jogo estiver ativo
+            isPaddleBeingDragged = true;
+            // Captura o ponteiro na ÁREA DO JOGO
+            // Isso permite que o movimento seja rastreado mesmo se o ponteiro sair brevemente da gameArea
+            gameArea.setPointerCapture(e.pointerId);
+            // Chama movePaddle imediatamente no down, para posicionar a plataforma no toque inicial
+            movePaddle(e);
+        }
+    });
+
+    // Listener para quando o ponteiro (mouse ou dedo) se move EM QUALQUER LUGAR DO DOCUMENTO
+    // É importante que seja no document para continuar rastreando mesmo fora da gameArea
+    document.addEventListener('pointermove', (e) => {
+        if (isPaddleBeingDragged) { // Só move se um arrasto foi iniciado
+            movePaddle(e);
+        }
+    });
+
+    // Listener para quando o ponteiro (mouse ou dedo) é solto EM QUALQUER LUGAR DO DOCUMENTO
+    document.addEventListener('pointerup', (e) => {
+        if (isPaddleBeingDragged) {
+            isPaddleBeingDragged = false;
+            // Libera a captura do ponteiro da ÁREA DO JOGO
+            if (gameArea.hasPointerCapture(e.pointerId)) {
+                gameArea.releasePointerCapture(e.pointerId);
+            }
+        }
+    });
+    // --- FIM DA NOVA LÓGICA DE CONTROLE ---
+
 
     // Event Listeners para iniciar o jogo
     startButton.addEventListener('click', startGame);

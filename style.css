@@ -140,8 +140,8 @@ button:hover {
     position: absolute; /* Deve ser absoluto dentro de #card-container */
     top: 0;
     left: 0;
-    width: 100%; /* Ocupa toda a largura do #card-container */
-    height: 100%; /* Ocupa toda a altura do #card-container */
+    width: 250px; /* Ocupa toda a largura do #card-container */
+    height: 350px; /* Ocupa toda a altura do #card-container */
     background-color: #f0f0f0; /* Cor de fundo para ser visível */
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);

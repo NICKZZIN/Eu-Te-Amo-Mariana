@@ -42,7 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreDisplay.textContent = score;
         resetEmojiAndPaddle();
         gameInterval = setInterval(gameLoop, 20); // Atualiza a cada 20ms
-        document.addEventListener('mousemove', movePaddle);
+        // No início da função startGame()
+        gameArea.addEventListener('pointerdown', (e) => {
+        gameArea.setPointerCapture(e.pointerId); // Captura o ponteiro para seguir fora da área
+        gameArea.addEventListener('pointermove', movePaddle);
+});
+
+gameArea.addEventListener('pointerup', (e) => {
+    gameArea.releasePointerCapture(e.pointerId); // Libera o ponteiro
+    gameArea.removeEventListener('pointermove', movePaddle);
+});
     }
 
     // Resetar a posição do emoji e da plataforma

@@ -43,7 +43,26 @@ document.addEventListener('DOMContentLoaded', () => {
         resetEmojiAndPaddle();
         gameInterval = setInterval(gameLoop, 20); // Atualiza a cada 20ms
         document.addEventListener('mousemove', movePaddle);
+        
     }
+
+    // (dentro do seu DOMContentLoaded, junto com o document.addEventListener('mousemove', movePaddle))
+
+// 1) Função que adapta o evento de toque para o movePaddle já existente
+function movePaddleTouch(e) {
+    // impede o scroll da página enquanto arrasta
+    e.preventDefault();
+
+    // pega a posição do primeiro dedo
+    const touch = e.touches[0];
+    // cria um "evento" mock com clientX pro movePaddle suportar sem alterações
+    movePaddle({ clientX: touch.clientX });
+}
+
+// 2) Registra os listeners de touch
+// use { passive: false } pra poder chamar e.preventDefault()
+gameArea.addEventListener('touchstart', movePaddleTouch, { passive: false });
+gameArea.addEventListener('touchmove',  movePaddleTouch, { passive: false });
 
     // Resetar a posição do emoji e da plataforma
     function resetEmojiAndPaddle() {

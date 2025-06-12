@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeCardButton = document.getElementById('close-card-button');
 
     // Variáveis do Jogo
-    let score = 0;
+    let score = 10;
     let emojiX = 0;
     let emojiY = 0;
     let emojiDX = 8; // Velocidade em X

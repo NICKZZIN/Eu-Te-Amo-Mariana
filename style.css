@@ -125,39 +125,26 @@ button:hover {
 
 /* Carta */
 #card-container {
-    /* ... outras propriedades ... */
-    opacity: 0; /* Começa escondido, mas se torna 1 quando aparece */
-    pointer-events: none; /* Não clicável quando escondido */
-    transition: opacity 0.5s ease-in-out; 
-    display: flex; 
-    justify-content: center;
-    align-items: center; 
-    position: relative;/* Transição para aparecer suavemente */
-}
-
-#card-container.visible { /* Essa classe é adicionada pelo JS para mostrar */
-    opacity: 1;
-    pointer-events: auto;
+    position: relative;
+    width: 250px;
+    height: 180px;
+    perspective: 1000px; /* Para a animação 3D da carta */
 }
 
 #closed-card {
-    position: absolute; /* Deve ser absoluto dentro de #card-container */
-    top: 0;
-    left: 0;
-    width: 350px; /* Ocupa toda a largura do #card-container */
-    height: 400px; /* Ocupa toda a altura do #card-container */
-    background-color: #f0f0f0; /* Cor de fundo para ser visível */
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    display: flex; /* Para centralizar o conteúdo, se houver */
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    backface-visibility: hidden;
+    cursor: pointer;
     transition: transform 0.6s;
-    z-index: 2; /* Garante que ela esteja acima da opened-card quando fechada */
-
-    /* Certifique-se de que não há "hidden" aqui */
-    /* ou qualquer propriedade que a torne invisível, como opacity: 0; */
+    backface-visibility: hidden; /* Para que a parte de trás não seja visível */
+    color: #333;
 }
 
 #closed-card img {
@@ -170,8 +157,8 @@ button:hover {
     position: absolute;
     top: 0;
     left: 0;
-    width: 350px;
-    height: 400px;
+    width: 100%;
+    height: 100%;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);

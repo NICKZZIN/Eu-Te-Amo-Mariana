@@ -126,8 +126,8 @@ button:hover {
 /* Carta */
 #card-container {
     position: relative;
-    width: 250px;
-    height: 180px;
+    width: 280px;
+    height: 350px;
     perspective: 1000px; /* Para a animação 3D da carta */
 }
 

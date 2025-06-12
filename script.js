@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let score = 0;
     let emojiX = 0;
     let emojiY = 0;
-    let emojiDX = 7; // Velocidade em X
-    let emojiDY = 7; // Velocidade em Y
+    let emojiDX = 5; // Velocidade em X
+    let emojiDY = 5; // Velocidade em Y
     let paddleX = 0;
     let gameInterval;
     const GAME_WIDTH = 600; // Largura do contêiner do jogo (ajustar conforme CSS)
@@ -30,12 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const PADDLE_HEIGHT = 20;
     const EMOJI_SIZE = 50;
     const TARGET_SCORE = 10; // Pontuação para parar o jogo
-
-    // Flag para controlar se o jogo está ativo (game state)
-    let isGameActive = false;
-    // Flag para controlar se o paddle está sendo arrastado (dragging state)
-    let isPaddleBeingDragged = false;
-
 
     // Funções do Jogo
 
@@ -47,15 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
         score = 0;
         scoreDisplay.textContent = score;
         resetEmojiAndPaddle();
-        isGameActive = true; // Jogo ativo, pode receber movimentos da plataforma
         gameInterval = setInterval(gameLoop, 20); // Atualiza a cada 20ms
+        document.addEventListener('mousemove', movePaddle);
     }
 
     // Resetar a posição do emoji e da plataforma
     function resetEmojiAndPaddle() {
         emojiX = gameArea.clientWidth / 2 - EMOJI_SIZE / 2;
-        emojiY = gameArea.clientHeight * 0.2; // Começa a 20% do topo da área do jogo
-
+        emojiY = gameArea.clientHeight / 2 - EMOJI_SIZE / 2;
         paddleX = gameArea.clientWidth / 2 - PADDLE_WIDTH / 2;
 
         emoji.style.left = `${emojiX}px`;
@@ -63,10 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
         paddle.style.left = `${paddleX}px`;
     }
 
-    // Mover a plataforma com o dedo/mouse
+    // Mover a plataforma com o mouse
     function movePaddle(event) {
-        // Posição X do centro da plataforma em relação à tela
-        let newPaddleX = event.clientX - gameArea.getBoundingClientRect().left - PADDLE_WIDTH / 2;
+        const gameAreaRect = gameArea.getBoundingClientRect();
+        let newPaddleX = event.clientX - gameAreaRect.left - PADDLE_WIDTH / 2;
 
         // Limita a plataforma dentro da área do jogo
         if (newPaddleX < 0) {
@@ -114,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Verifica a pontuação para a transição
             if (score >= TARGET_SCORE) {
                 clearInterval(gameInterval); // Para o jogo
-                isGameActive = false; // Jogo não está mais ativo
+                document.removeEventListener('mousemove', movePaddle);
                 showLoveMessage();
             }
         }
@@ -122,27 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Se o emoji cair (game over)
         if (emojiY + EMOJI_SIZE > gameArea.clientHeight) {
             clearInterval(gameInterval);
-            isGameActive = false; // Jogo não está mais ativo
-            isPaddleBeingDragged = false; // Garante que o arrasto pare
-
+            document.removeEventListener('mousemove', movePaddle);
             alert('Ops! O coração caiu... Mas não se preocupe, o amor continua! Clique em OK para tentar novamente.');
-
-            // Volta para a tela inicial
-            gameArea.classList.add('hidden');
             startScreen.classList.remove('hidden');
-
-            // Resetar o estado da pontuação para o próximo jogo
-            score = 0; // Zera a pontuação
-            scoreDisplay.textContent = score; // Atualiza o display
-
-            // Garante que o display da pontuação esteja no lugar certo para o próximo jogo
-            scoreDisplay.style.position = 'absolute';
-            scoreDisplay.style.top = '20px';
-            scoreDisplay.style.left = 'auto';
-            scoreDisplay.style.transform = 'none';
-            scoreDisplay.style.fontSize = '3em';
-            scoreDisplay.classList.remove('hidden');
-            return; // Sai da função gameLoop para não processar mais nada
+            gameArea.classList.add('hidden');
         }
 
         // Atualiza a posição do emoji no DOM
@@ -155,14 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameArea.classList.add('hidden');
         loveMessageScreen.classList.remove('hidden');
         loveMessageScreen.classList.add('visible');
-        isPaddleBeingDragged = false; // Garante que o arrasto pare
 
-        // Mostra o "Quanto eu te amo"
-        if (loveText) {
-            loveText.textContent = 'Quanto eu te amo:'; // Define o texto
-            loveText.classList.remove('hidden'); // Garante que loveText esteja visível
-        }
-        
         // Animação da pontuação descendo e aumentando
         scoreDisplay.style.position = 'absolute';
         scoreDisplay.style.top = '50%';
@@ -205,8 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     closedCard.addEventListener('click', () => {
         cardContainer.classList.add('open');
         // Conteúdo da carta - **EDITE AQUI SUA MENSAGEM**
-        // Use innerHTML para que as quebras de linha e qualquer formatação HTML funcionem!
-        cardContent.innerHTML = `
+        cardContent.textContent = `
         Oiiiii minha princesa, não faz muito tempo que já disse isso, mas eu queria dizer de novo eu amei ter te conhecido, eu amei a nossa primeira interação, desde lá até hoje, eu tenho amado esse tempo com você, meu dia só é dia se posso conversar com você, pq você é meu Sol, que ilumina meu dia mediante as coisas que quero esquecer, conversando contigo eu sou a pessoa mais feliz do mundo, e mesmo que não estejamos conversando tanto esses tempos sabe, mesmo que só responda se está tudo bem, se você tá comendo direitinho e bebendo aguinha, então saiba que meu dia é com toda certeza melhor, quando tenho você comigo. Estarei com você pra sempre, seu dia estando bom ou ruim, vc achando que tá chata ou não, mesmo que não estejamos conversando eu ainda vou estar aqui por você. Eu queria poder te fazer sentir o quanto eu te amo e o quanto vc é uma benção na minha vida, não no "modo mãe" de falar kkkkkkk, digo um como um presente, você é tipo ganhar algo que você gosta autografado por uma pessoa que você é muito fã, sabe? Eu quero dizer é que, você é única, e se posso dizer que acertei em algo na minha vida, esse algo foi ter escolhido ficar com você, e se eu pudesse que escolher de novo, eu com certeza te escolheria, não me arrependo, e nem teria como me arrepender doq torna meu dias mais felizes❤️
 Obrigado por ter me escolhido mesmo que não fosse escolher terminar, mais por estar tudo difícil e você decidir continuar, sei que não faz sentido, mas eu me odiaria se te visse com outro homem, ou soubesse, não consigo nem imaginar uma coisa dessas, tudo que eu mais queria agora era estar pertinho de você pra gente aproveitar esse dia, não vejo a hora de entrar logo naquele exército e sair o mais rápido possível pra ir te ver, sabe, eu não almejo muita coisa na vida, digo, não quero disputa sobre ser o melhor em algo por exemplo, sla, é que, eu já tenho tudo que eu preciso, e é você, não tô dizendo que não quero por exemplo sair e aproveitar, sabe? Mas se tiver que sair, que seja com você, se tiver de aproveitar algo que seja com você, se tiver de registrar um momento na minha vida, quero que você esteja lá, pq você é o motivo, o sentido, o que me completa, quem me preenche, alguém que com poucas palavras, já consegue me fazer a pessoa mais feliz do mundo e a mais sortuda de ter você aqui comigo, eu te amo muito Mariana❤️ Obrigado por ficar, obrigado por ser essa mulher incrível, obrigado por me escolher, obrigado por ser a mulher da minha vida, por ter essa alma linda e esse coração grandioso. Você é a minha bênção e sou muito grato a Deus. EU NICOLAS CARVALHO NASCIMENTO amo VOCÊ MARIANA SILVA DE JESUS, não se esqueça nunca disso, você É e SEMPRE SERÁ a mulher da minha vida❤️
 
@@ -219,85 +187,26 @@ Feliz dia dos namorados meu amor❤️
     closeCardButton.addEventListener('click', () => {
         cardContainer.classList.remove('open');
         setTimeout(() => {
-            // Esconde a tela da mensagem e mostra a tela inicial
-            loveMessageScreen.classList.add('hidden'); // Garante que a tela principal da mensagem esteja escondida
-            loveMessageScreen.classList.remove('visible'); // Remove a classe de visibilidade
-            
-            // IMPORTANTE: Zera e esconde o texto "Quanto eu te amo" (loveText)
-            if (loveText) {
-                loveText.textContent = ''; // Limpa o conteúdo
-                loveText.innerHTML = ''; // Garante que qualquer HTML também seja removido
-                loveText.classList.add('hidden'); // Esconde o elemento
-            }
-            // Garante que o infiniteScoreDisplay (o símbolo de infinito) também esteja escondido e resetado
-            infiniteScoreDisplay.textContent = '0'; // Reseta o texto do infinito
-            infiniteScoreDisplay.classList.add('hidden'); // Esconde o display do infinito
-
-            // Resetar o scoreDisplay para o próximo jogo
-            score = 0; // Zera a pontuação para o próximo jogo
-            scoreDisplay.textContent = score; // Atualiza o display da pontuação
+            // Poderia redirecionar ou reiniciar o jogo aqui, se quiser
+            // Por enquanto, apenas esconde a tela da mensagem e mostra a inicial
+            loveMessageScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
             scoreDisplay.style.position = 'absolute'; // Volta a posição original da pontuação
             scoreDisplay.style.top = '20px';
             scoreDisplay.style.left = 'auto';
             scoreDisplay.style.transform = 'none';
             scoreDisplay.style.fontSize = '3em';
-            scoreDisplay.classList.remove('hidden'); // Garante que a pontuação esteja visível
-
+            scoreDisplay.classList.remove('hidden'); // Garante que a pontuação esteja visível para o próximo jogo
+            infiniteScoreDisplay.textContent = '0'; // Reseta o infinito
+            infiniteScoreDisplay.classList.add('hidden'); // Esconde o infinito
             cardContainer.classList.remove('visible'); // Esconde a carta
             cardContainer.style.opacity = 0;
             cardContainer.style.pointerEvents = 'none';
-
-            // Garante que o botão de início seja clicável novamente
-            startButton.style.pointerEvents = 'auto';
-
-            // Limpa o conteúdo da carta aberta para que não apareça na próxima vez que ela for aberta
-            cardContent.innerHTML = ''; // MUITO IMPORTANTE!
-
-            // --- ESCOLHA AQUI: Reiniciar a página OU Voltar para a tela inicial ---
-            // Se você realmente quer reiniciar a página inteira, descomente a linha abaixo:
-            // location.reload();
-
-            // Se você quer apenas voltar para a tela inicial do jogo (como está agora):
-            startScreen.classList.remove('hidden');
-            // --- FIM DA ESCOLHA ---
-
         }, 600); // Espera a animação de fechamento da carta
     });
 
 
-    // --- LÓGICA DE CONTROLE DA PLATAFORMA ---
-    // Listener para quando o ponteiro (mouse ou dedo) é pressionado na ÁREA DO JOGO
-    gameArea.addEventListener('pointerdown', (e) => {
-        if (isGameActive) { // Só permite arrastar se o jogo estiver ativo
-            isPaddleBeingDragged = true;
-            // Captura o ponteiro na ÁREA DO JOGO
-            gameArea.setPointerCapture(e.pointerId);
-            // Chama movePaddle imediatamente no down, para posicionar a plataforma no toque inicial
-            movePaddle(e);
-        }
-    });
-
-    // Listener para quando o ponteiro (mouse ou dedo) se move EM QUALQUER LUGAR DO DOCUMENTO
-    document.addEventListener('pointermove', (e) => {
-        if (isPaddleBeingDragged) { // Só move se um arrasto foi iniciado
-            movePaddle(e);
-        }
-    });
-
-    // Listener para quando o ponteiro (mouse ou dedo) é solto EM QUALQUER LUGAR DO DOCUMENTO
-    document.addEventListener('pointerup', (e) => {
-        if (isPaddleBeingDragged) {
-            isPaddleBeingDragged = false;
-            // Libera a captura do ponteiro da ÁREA DO JOGO
-            if (gameArea.hasPointerCapture(e.pointerId)) {
-                gameArea.releasePointerCapture(e.pointerId);
-            }
-        }
-    });
-    // --- FIM DA LÓGICA DE CONTROLE ---
-
-
-    // Event Listeners para iniciar o jogo
+    // Event Listeners
     startButton.addEventListener('click', startGame);
 
     // Esconde a área do jogo e a tela de mensagem no início

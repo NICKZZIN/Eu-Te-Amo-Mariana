@@ -20,15 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let score = 0;
     let emojiX = 0;
     let emojiY = 0;
-    let emojiDX = 5; // Velocidade em X
-    let emojiDY = 5; // Velocidade em Y
+    let emojiDX = 8; // Velocidade em X
+    let emojiDY = 8; // Velocidade em Y
     let paddleX = 0;
-    let gameInterval;
+    let gameInterval; 
     const GAME_WIDTH = 600; // Largura do contêiner do jogo (ajustar conforme CSS)
-    const GAME_HEIGHT = 800; // Altura do contêiner do jogo (ajustar conforme CSS)
+    const GAME_HEIGHT = 900; // Altura do contêiner do jogo (ajustar conforme CSS)
     const PADDLE_WIDTH = 120;
-    const PADDLE_HEIGHT = 20;
-    const EMOJI_SIZE = 50;
+    const PADDLE_HEIGHT = 22;
+    const EMOJI_SIZE = 45;
     const TARGET_SCORE = 10; // Pontuação para parar o jogo
 
     // Funções do Jogo

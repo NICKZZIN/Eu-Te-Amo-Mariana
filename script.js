@@ -66,19 +66,20 @@ gameArea.addEventListener('pointerup', (e) => {
     }
 
     // Mover a plataforma com o mouse
-    function movePaddle(event) {
-        const gameAreaRect = gameArea.getBoundingClientRect();
-        let newPaddleX = event.clientX - gameAreaRect.left - PADDLE_WIDTH / 2;
+    // Mover a plataforma com o dedo/mouse
+function movePaddle(event) {
+    // Posição X do centro da plataforma em relação à tela
+    let newPaddleX = event.clientX - gameArea.getBoundingClientRect().left - PADDLE_WIDTH / 2;
 
-        // Limita a plataforma dentro da área do jogo
-        if (newPaddleX < 0) {
-            newPaddleX = 0;
-        } else if (newPaddleX > gameArea.clientWidth - PADDLE_WIDTH) {
-            newPaddleX = gameArea.clientWidth - PADDLE_WIDTH;
-        }
-        paddleX = newPaddleX;
-        paddle.style.left = `${paddleX}px`;
+    // Limita a plataforma dentro da área do jogo
+    if (newPaddleX < 0) {
+        newPaddleX = 0;
+    } else if (newPaddleX > gameArea.clientWidth - PADDLE_WIDTH) {
+        newPaddleX = gameArea.clientWidth - PADDLE_WIDTH;
     }
+    paddleX = newPaddleX;
+    paddle.style.left = `${paddleX}px`;
+}
 
     // Loop principal do jogo
     function gameLoop() {

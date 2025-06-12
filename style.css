@@ -128,7 +128,8 @@ button:hover {
     /* ... outras propriedades ... */
     opacity: 0; /* Começa escondido, mas se torna 1 quando aparece */
     pointer-events: none; /* Não clicável quando escondido */
-    transition: opacity 0.5s ease-in-out; /* Transição para aparecer suavemente */
+    transition: opacity 0.5s ease-in-out; 
+    display: flex; /* Transição para aparecer suavemente */
 }
 
 #card-container.visible { /* Essa classe é adicionada pelo JS para mostrar */
@@ -166,8 +167,8 @@ button:hover {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 450px;
+    height: 550%;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);

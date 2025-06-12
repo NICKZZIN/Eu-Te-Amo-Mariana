@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let score = 0;
     let emojiX = 0;
     let emojiY = 0;
-    let emojiDX = 5; // Velocidade em X
-    let emojiDY = 5; // Velocidade em Y
+    let emojiDX = 7; // Velocidade em X (AQUI: Ajustei para 7)
+    let emojiDY = 7; // Velocidade em Y (AQUI: Ajustei para 7)
     let paddleX = 0;
     let gameInterval;
     const GAME_WIDTH = 600; // Largura do contêiner do jogo (ajustar conforme CSS)
@@ -42,16 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreDisplay.textContent = score;
         resetEmojiAndPaddle();
         gameInterval = setInterval(gameLoop, 20); // Atualiza a cada 20ms
-        // No início da função startGame()
-        gameArea.addEventListener('pointerdown', (e) => {
-        gameArea.setPointerCapture(e.pointerId); // Captura o ponteiro para seguir fora da área
-        gameArea.addEventListener('pointermove', movePaddle);
-});
 
-gameArea.addEventListener('pointerup', (e) => {
-    gameArea.releasePointerCapture(e.pointerId); // Libera o ponteiro
-    gameArea.removeEventListener('pointermove', movePaddle);
-});
+        // Event listeners para o controle da plataforma
+        gameArea.addEventListener('pointerdown', (e) => {
+            gameArea.setPointerCapture(e.pointerId); // Captura o ponteiro para seguir fora da área
+            gameArea.addEventListener('pointermove', movePaddle);
+        });
+
+        gameArea.addEventListener('pointerup', (e) => {
+            gameArea.releasePointerCapture(e.pointerId); // Libera o ponteiro
+            gameArea.removeEventListener('pointermove', movePaddle);
+        });
     }
 
     // Resetar a posição do emoji e da plataforma
@@ -65,21 +66,20 @@ gameArea.addEventListener('pointerup', (e) => {
         paddle.style.left = `${paddleX}px`;
     }
 
-    // Mover a plataforma com o mouse
     // Mover a plataforma com o dedo/mouse
-function movePaddle(event) {
-    // Posição X do centro da plataforma em relação à tela
-    let newPaddleX = event.clientX - gameArea.getBoundingClientRect().left - PADDLE_WIDTH / 2;
+    function movePaddle(event) {
+        // Posição X do centro da plataforma em relação à tela
+        let newPaddleX = event.clientX - gameArea.getBoundingClientRect().left - PADDLE_WIDTH / 2;
 
-    // Limita a plataforma dentro da área do jogo
-    if (newPaddleX < 0) {
-        newPaddleX = 0;
-    } else if (newPaddleX > gameArea.clientWidth - PADDLE_WIDTH) {
-        newPaddleX = gameArea.clientWidth - PADDLE_WIDTH;
+        // Limita a plataforma dentro da área do jogo
+        if (newPaddleX < 0) {
+            newPaddleX = 0;
+        } else if (newPaddleX > gameArea.clientWidth - PADDLE_WIDTH) {
+            newPaddleX = gameArea.clientWidth - PADDLE_WIDTH;
+        }
+        paddleX = newPaddleX;
+        paddle.style.left = `${paddleX}px`;
     }
-    paddleX = newPaddleX;
-    paddle.style.left = `${paddleX}px`;
-}
 
     // Loop principal do jogo
     function gameLoop() {
@@ -117,7 +117,8 @@ function movePaddle(event) {
             // Verifica a pontuação para a transição
             if (score >= TARGET_SCORE) {
                 clearInterval(gameInterval); // Para o jogo
-                document.removeEventListener('mousemove', movePaddle);
+                // AQUI: CORREÇÃO PARA REMOVER O LISTENER CORRETAMENTE
+                gameArea.removeEventListener('pointermove', movePaddle);
                 showLoveMessage();
             }
         }
@@ -125,7 +126,8 @@ function movePaddle(event) {
         // Se o emoji cair (game over)
         if (emojiY + EMOJI_SIZE > gameArea.clientHeight) {
             clearInterval(gameInterval);
-            document.removeEventListener('mousemove', movePaddle);
+            // AQUI: CORREÇÃO PARA REMOVER O LISTENER CORRETAMENTE
+            gameArea.removeEventListener('pointermove', movePaddle);
             alert('Ops! O coração caiu... Mas não se preocupe, o amor continua! Clique em OK para tentar novamente.');
             startScreen.classList.remove('hidden');
             gameArea.classList.add('hidden');
@@ -185,24 +187,11 @@ function movePaddle(event) {
         cardContainer.classList.add('open');
         // Conteúdo da carta - **EDITE AQUI SUA MENSAGEM**
         cardContent.textContent = `
-        Meu amor,
+        Oiiiii minha princesa, não faz muito tempo que já disse isso, mas eu queria dizer de novo eu amei ter te conhecido, eu amei a nossa primeira interação, desde lá até hoje, eu tenho amado esse tempo com você, meu dia só é dia se posso conversar com você, pq você é meu Sol, que ilumina meu dia mediante as coisas que quero esquecer, conversando contigo eu sou a pessoa mais feliz do mundo, e mesmo que não estejamos conversando tanto esses tempos sabe, mesmo que só responda se está tudo bem, se você tá comendo direitinho e bebendo aguinha, então saiba que meu dia é com toda certeza melhor, quando tenho você comigo. Estarei com você pra sempre, seu dia estando bom ou ruim, vc achando que tá chata ou não, mesmo que não estejamos conversando eu ainda vou estar aqui por você. Eu queria poder te fazer sentir o quanto eu te amo e o quanto vc é uma benção na minha vida, não no "modo mãe" de falar kkkkkkk, digo um como um presente, você é tipo ganhar algo que você gosta autografado por uma pessoa que você é muito fã, sabe? Eu quero dizer é que, você é única, e se posso dizer que acertei em algo na minha vida, esse algo foi ter escolhido ficar com você, e se eu pudesse que escolher de novo, eu com certeza te escolheria, não me arrependo, e nem teria como me arrepender doq torna meu dias mais felizes❤️
+Obrigado por ter me escolhido mesmo que não fosse escolher terminar, mais por estar tudo difícil e você decidir continuar, sei que não faz sentido, mas eu me odiaria se te visse com outro homem, ou soubesse, não consigo nem imaginar uma coisa dessas, tudo que eu mais queria agora era estar pertinho de você pra gente aproveitar esse dia, não vejo a hora de entrar logo naquele exército e sair o mais rápido possível pra ir te ver, sabe, eu não almejo muita coisa na vida, digo, não quero disputa sobre ser o melhor em algo por exemplo, sla, é que, eu já tenho tudo que eu preciso, e é você, não tô dizendo que não quero por exemplo sair e aproveitar, sabe? Mas se tiver que sair, que seja com você, se tiver de aproveitar algo que seja com você, se tiver de registrar um momento na minha vida, quero que você esteja lá, pq você é o motivo, o sentido, o que me completa, quem me preenche, alguém que com poucas palavras, já consegue me fazer a pessoa mais feliz do mundo e a mais sortuda de ter você aqui comigo, eu te amo muito Mariana❤️ Obrigado por ficar, obrigado por ser essa mulher incrível, obrigado por me escolher, obrigado por ser a mulher da minha vida, por ter essa alma linda e esse coração grandioso. Você é a minha bênção e sou muito grato a Deus. EU NICOLAS CARVALHO NASCIMENTO amo VOCÊ MARIANA SILVA DE JESUS, não se esqueça nunca disso, você É e SEMPRE SERÁ a mulher da minha vida❤️
 
-        Cada batida do meu coração é sua.
-        Você me faz acreditar no amor mais puro,
-        na alegria que transborda e na parceria
-        que me inspira a ser alguém melhor a cada dia.
-
-        Você é a estrela mais brilhante no meu céu,
-        a melodia mais linda na minha canção,
-        e a paz que acalma a minha alma.
-
-        Prometo te amar e te valorizar,
-        em todos os momentos, para todo o sempre.
-
-        Feliz Dia dos Namorados, meu eterno amor!
-
-        Com todo o meu coração,
-        [Seu Nome Aqui]
+Feliz dia dos namorados meu amor❤️
+        Ass: Nicolas Rs🫦
         `;
     });
 

@@ -157,6 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
         loveMessageScreen.classList.add('visible');
         isPaddleBeingDragged = false; // Garante que o arrasto pare
 
+        // Mostra o "Quanto eu te amo"
+        if (loveText) {
+            loveText.textContent = 'Quanto eu te amo:'; // Define o texto
+            loveText.classList.remove('hidden'); // Garante que loveText esteja visível
+        }
+        
         // Animação da pontuação descendo e aumentando
         scoreDisplay.style.position = 'absolute';
         scoreDisplay.style.top = '50%';
@@ -199,7 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
     closedCard.addEventListener('click', () => {
         cardContainer.classList.add('open');
         // Conteúdo da carta - **EDITE AQUI SUA MENSAGEM**
-        cardContent.textContent = `
+        // Use innerHTML para que as quebras de linha e qualquer formatação HTML funcionem!
+        cardContent.innerHTML = `
         Oiiiii minha princesa, não faz muito tempo que já disse isso, mas eu queria dizer de novo eu amei ter te conhecido, eu amei a nossa primeira interação, desde lá até hoje, eu tenho amado esse tempo com você, meu dia só é dia se posso conversar com você, pq você é meu Sol, que ilumina meu dia mediante as coisas que quero esquecer, conversando contigo eu sou a pessoa mais feliz do mundo, e mesmo que não estejamos conversando tanto esses tempos sabe, mesmo que só responda se está tudo bem, se você tá comendo direitinho e bebendo aguinha, então saiba que meu dia é com toda certeza melhor, quando tenho você comigo. Estarei com você pra sempre, seu dia estando bom ou ruim, vc achando que tá chata ou não, mesmo que não estejamos conversando eu ainda vou estar aqui por você. Eu queria poder te fazer sentir o quanto eu te amo e o quanto vc é uma benção na minha vida, não no "modo mãe" de falar kkkkkkk, digo um como um presente, você é tipo ganhar algo que você gosta autografado por uma pessoa que você é muito fã, sabe? Eu quero dizer é que, você é única, e se posso dizer que acertei em algo na minha vida, esse algo foi ter escolhido ficar com você, e se eu pudesse que escolher de novo, eu com certeza te escolheria, não me arrependo, e nem teria como me arrepender doq torna meu dias mais felizes❤️
 Obrigado por ter me escolhido mesmo que não fosse escolher terminar, mais por estar tudo difícil e você decidir continuar, sei que não faz sentido, mas eu me odiaria se te visse com outro homem, ou soubesse, não consigo nem imaginar uma coisa dessas, tudo que eu mais queria agora era estar pertinho de você pra gente aproveitar esse dia, não vejo a hora de entrar logo naquele exército e sair o mais rápido possível pra ir te ver, sabe, eu não almejo muita coisa na vida, digo, não quero disputa sobre ser o melhor em algo por exemplo, sla, é que, eu já tenho tudo que eu preciso, e é você, não tô dizendo que não quero por exemplo sair e aproveitar, sabe? Mas se tiver que sair, que seja com você, se tiver de aproveitar algo que seja com você, se tiver de registrar um momento na minha vida, quero que você esteja lá, pq você é o motivo, o sentido, o que me completa, quem me preenche, alguém que com poucas palavras, já consegue me fazer a pessoa mais feliz do mundo e a mais sortuda de ter você aqui comigo, eu te amo muito Mariana❤️ Obrigado por ficar, obrigado por ser essa mulher incrível, obrigado por me escolher, obrigado por ser a mulher da minha vida, por ter essa alma linda e esse coração grandioso. Você é a minha bênção e sou muito grato a Deus. EU NICOLAS CARVALHO NASCIMENTO amo VOCÊ MARIANA SILVA DE JESUS, não se esqueça nunca disso, você É e SEMPRE SERÁ a mulher da minha vida❤️
 
@@ -213,11 +220,20 @@ Feliz dia dos namorados meu amor❤️
         cardContainer.classList.remove('open');
         setTimeout(() => {
             // Esconde a tela da mensagem e mostra a tela inicial
-            loveMessageScreen.classList.add('hidden'); // Esconde a tela principal da mensagem
+            loveMessageScreen.classList.add('hidden'); // Garante que a tela principal da mensagem esteja escondida
             loveMessageScreen.classList.remove('visible'); // Remove a classe de visibilidade
-            startScreen.classList.remove('hidden');
+            
+            // IMPORTANTE: Zera e esconde o texto "Quanto eu te amo" (loveText)
+            if (loveText) {
+                loveText.textContent = ''; // Limpa o conteúdo
+                loveText.innerHTML = ''; // Garante que qualquer HTML também seja removido
+                loveText.classList.add('hidden'); // Esconde o elemento
+            }
+            // Garante que o infiniteScoreDisplay (o símbolo de infinito) também esteja escondido e resetado
+            infiniteScoreDisplay.textContent = '0'; // Reseta o texto do infinito
+            infiniteScoreDisplay.classList.add('hidden'); // Esconde o display do infinito
 
-            // Resetar o estado da pontuação, infinito e carta para o próximo jogo
+            // Resetar o scoreDisplay para o próximo jogo
             score = 0; // Zera a pontuação para o próximo jogo
             scoreDisplay.textContent = score; // Atualiza o display da pontuação
             scoreDisplay.style.position = 'absolute'; // Volta a posição original da pontuação
@@ -227,9 +243,6 @@ Feliz dia dos namorados meu amor❤️
             scoreDisplay.style.fontSize = '3em';
             scoreDisplay.classList.remove('hidden'); // Garante que a pontuação esteja visível
 
-            infiniteScoreDisplay.textContent = '0'; // Reseta o texto do infinito
-            infiniteScoreDisplay.classList.add('hidden'); // Esconde o display do infinito
-
             cardContainer.classList.remove('visible'); // Esconde a carta
             cardContainer.style.opacity = 0;
             cardContainer.style.pointerEvents = 'none';
@@ -237,7 +250,17 @@ Feliz dia dos namorados meu amor❤️
             // Garante que o botão de início seja clicável novamente
             startButton.style.pointerEvents = 'auto';
 
-            // O jogo estará pronto para ser iniciado novamente
+            // Limpa o conteúdo da carta aberta para que não apareça na próxima vez que ela for aberta
+            cardContent.innerHTML = ''; // MUITO IMPORTANTE!
+
+            // --- ESCOLHA AQUI: Reiniciar a página OU Voltar para a tela inicial ---
+            // Se você realmente quer reiniciar a página inteira, descomente a linha abaixo:
+            // location.reload();
+
+            // Se você quer apenas voltar para a tela inicial do jogo (como está agora):
+            startScreen.classList.remove('hidden');
+            // --- FIM DA ESCOLHA ---
+
         }, 600); // Espera a animação de fechamento da carta
     });
 
@@ -248,7 +271,6 @@ Feliz dia dos namorados meu amor❤️
         if (isGameActive) { // Só permite arrastar se o jogo estiver ativo
             isPaddleBeingDragged = true;
             // Captura o ponteiro na ÁREA DO JOGO
-            // Isso permite que o movimento seja rastreado mesmo se o ponteiro sair brevemente da gameArea
             gameArea.setPointerCapture(e.pointerId);
             // Chama movePaddle imediatamente no down, para posicionar a plataforma no toque inicial
             movePaddle(e);
@@ -256,7 +278,6 @@ Feliz dia dos namorados meu amor❤️
     });
 
     // Listener para quando o ponteiro (mouse ou dedo) se move EM QUALQUER LUGAR DO DOCUMENTO
-    // É importante que seja no document para continuar rastreando mesmo fora da gameArea
     document.addEventListener('pointermove', (e) => {
         if (isPaddleBeingDragged) { // Só move se um arrasto foi iniciado
             movePaddle(e);

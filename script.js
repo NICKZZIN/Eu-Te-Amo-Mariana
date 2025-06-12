@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Elementos do DOM
     const gameContainer = document.getElementById('game-container');
     const startScreen = document.getElementById('start-screen');
-    const startButton = document.getElementById('startButton'); // Verifique se o ID está correto
+    const startButton = document.getElementById('start-button');
     const gameArea = document.getElementById('game-area');
     const scoreDisplay = document.getElementById('score');
     const emoji = document.getElementById('emoji');
@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let score = 0;
     let emojiX = 0;
     let emojiY = 0;
-    let emojiDX = 7; // Velocidade em X (AQUI: Ajustei para 7)
-    let emojiDY = 7; // Velocidade em Y (AQUI: Ajustei para 7)
+    let emojiDX = 7; // Velocidade em X
+    let emojiDY = 7; // Velocidade em Y
     let paddleX = 0;
     let gameInterval;
     const GAME_WIDTH = 600; // Largura do contêiner do jogo (ajustar conforme CSS)
@@ -31,8 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const EMOJI_SIZE = 50;
     const TARGET_SCORE = 10; // Pontuação para parar o jogo
 
-    // Flag para saber se o jogo está ativo e pode receber movimentos
+    // Flag para controlar se o jogo está ativo e pode receber movimentos (game state)
     let isGameActive = false;
+    // Flag para controlar se o paddle está sendo arrastado (dragging state)
+    let isDraggingPaddle = false;
+
 
     // Funções do Jogo
 
@@ -44,14 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
         score = 0;
         scoreDisplay.textContent = score;
         resetEmojiAndPaddle();
-        isGameActive = true; // Jogo ativo, pode receber movimentos
+        isGameActive = true; // Jogo ativo, pode receber movimentos da plataforma
         gameInterval = setInterval(gameLoop, 20); // Atualiza a cada 20ms
     }
 
     // Resetar a posição do emoji e da plataforma
     function resetEmojiAndPaddle() {
         emojiX = gameArea.clientWidth / 2 - EMOJI_SIZE / 2;
-        emojiY = gameArea.clientHeight / 2 - EMOJI_SIZE / 2;
+        // --- MUDANÇA AQUI: Emoji começa mais acima ---
+        emojiY = gameArea.clientHeight * 0.2; // Começa a 20% do topo da área do jogo
+        // --- FIM DA MUDANÇA ---
+
         paddleX = gameArea.clientWidth / 2 - PADDLE_WIDTH / 2;
 
         emoji.style.left = `${emojiX}px`;
@@ -61,9 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mover a plataforma com o dedo/mouse
     function movePaddle(event) {
-        if (!isGameActive) return; // Só move se o jogo estiver ativo
-
+        // Não precisamos verificar isGameActive aqui, pois isDraggingPaddle já garante isso
+        // isDraggingPaddle é true apenas quando o jogo está ativo e o ponteiro está pressionado
+        
         // Posição X do centro da plataforma em relação à tela
+        // Usamos event.clientX para a posição horizontal do ponteiro
         let newPaddleX = event.clientX - gameArea.getBoundingClientRect().left - PADDLE_WIDTH / 2;
 
         // Limita a plataforma dentro da área do jogo
@@ -210,23 +218,37 @@ Feliz dia dos namorados meu amor❤️
         }, 600); // Espera a animação de fechamento da carta
     });
 
-    // --- MUDANÇA IMPORTANTE AQUI ---
-    // Adicionamos os listeners de pointer globalmente e controlamos com a flag isGameActive
+    // --- MUDANÇA IMPORTANTE: Event Listeners para controle da plataforma (GLOBAL) ---
+    // Adicionamos os listeners para a área do jogo (gameArea)
     gameArea.addEventListener('pointerdown', (e) => {
-        gameArea.setPointerCapture(e.pointerId); // Captura o ponteiro
-        // Adiciona o listener de movimento APENAS quando o ponteiro está pressionado
-        gameArea.addEventListener('pointermove', movePaddle);
+        // Verifica se o clique/toque inicial foi na área da plataforma para começar a arrastar
+        const rect = paddle.getBoundingClientRect();
+        if (e.clientX >= rect.left && e.clientX <= rect.right &&
+            e.clientY >= rect.top && e.clientY <= rect.bottom) {
+            isDraggingPaddle = true;
+            // Captura o ponteiro para que o movimento continue mesmo se sair da área da plataforma
+            paddle.setPointerCapture(e.pointerId);
+        }
     });
 
     gameArea.addEventListener('pointerup', (e) => {
-        gameArea.releasePointerCapture(e.pointerId); // Libera o ponteiro
-        // Remove o listener de movimento quando o ponteiro é solto
-        gameArea.removeEventListener('pointermove', movePaddle);
+        isDraggingPaddle = false;
+        // Libera a captura do ponteiro
+        if (paddle.hasPointerCapture(e.pointerId)) {
+            paddle.releasePointerCapture(e.pointerId);
+        }
+    });
+
+    // Este listener é global para o gameArea, mas a função movePaddle só agirá se isDraggingPaddle for true
+    gameArea.addEventListener('pointermove', (e) => {
+        if (isDraggingPaddle) {
+            movePaddle(e);
+        }
     });
     // --- FIM DA MUDANÇA IMPORTANTE ---
 
 
-    // Event Listeners
+    // Event Listeners para iniciar o jogo
     startButton.addEventListener('click', startGame);
 
     // Esconde a área do jogo e a tela de mensagem no início

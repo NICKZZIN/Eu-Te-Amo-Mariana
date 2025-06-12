@@ -67,7 +67,7 @@ gameArea.addEventListener('touchmove',  movePaddleTouch, { passive: false });
     // Resetar a posição do emoji e da plataforma
     function resetEmojiAndPaddle() {
         emojiX = gameArea.clientWidth / 2 - EMOJI_SIZE / 2;
-        emojiY = gameArea.clientHeight / 5 - EMOJI_SIZE / 2;
+        emojiY = gameArea.clientHeight / 7 - EMOJI_SIZE / 2;
         paddleX = gameArea.clientWidth / 2 - PADDLE_WIDTH / 2;
 
         emoji.style.left = `${emojiX}px`;

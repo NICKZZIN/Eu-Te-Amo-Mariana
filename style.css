@@ -1,0 +1,214 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #ff7e5f, #feb47b); /* Um fundo gradiente bonitinho */
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    height: 80vh;
+    max-height: 800px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden; /* Para não mostrar elementos fora da área */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Telas */
+#start-screen, #game-area, #love-message-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#start-screen {
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10;
+}
+
+#game-area {
+    background-color: rgba(0, 0, 0, 0.2);
+    z-index: 5;
+    position: relative; /* Para posicionar os elementos internos */
+}
+
+#love-message-screen {
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none; /* Desabilita interações quando invisível */
+}
+
+/* Botões */
+button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 50px;
+    background-color: #ff4d4d;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #e60000;
+}
+
+/* Jogo */
+#score {
+    position: absolute;
+    top: 20px;
+    font-size: 3em;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    transition: transform 0.8s ease-out, top 0.8s ease-out, font-size 0.8s ease-out; /* Animação para a pontuação */
+}
+
+#emoji {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-size: cover;
+    border-radius: 50%;
+    background-image: url('https://em-content.zobj.net/source/apple/354/red-heart_2764-fe0f.png'); /* Coração vermelho, você pode trocar! */
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+    transition: transform 0.05s linear; /* Para um movimento mais suave */
+}
+
+#paddle {
+    position: absolute;
+    width: 120px;
+    height: 20px;
+    background-color: #00bfff;
+    border-radius: 10px;
+    bottom: 20px;
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.8);
+    transition: left 0.1s linear; /* Para um movimento mais suave */
+}
+
+/* Tela da Mensagem de Amor */
+#love-text {
+    font-size: 3em;
+    font-weight: bold;
+    color: #ff69b4; /* Rosa choque */
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 10px rgba(255, 105, 180, 0.7);
+}
+
+#infinite-score {
+    font-size: 5em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.7);
+    margin-bottom: 30px;
+    transition: font-size 0.2s ease-out;
+}
+
+/* Carta */
+#card-container {
+    position: relative;
+    width: 250px;
+    height: 180px;
+    perspective: 1000px; /* Para a animação 3D da carta */
+}
+
+#closed-card {
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.6s;
+    backface-visibility: hidden; /* Para que a parte de trás não seja visível */
+    color: #333;
+}
+
+#closed-card img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+}
+
+#opened-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    box-sizing: border-box;
+    transform: rotateY(180deg); /* Começa virada para trás */
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    color: #333;
+    overflow-y: auto; /* Para texto longo */
+}
+
+#card-container.open #closed-card {
+    transform: rotateY(-180deg);
+}
+
+#card-container.open #opened-card {
+    transform: rotateY(0deg);
+}
+
+#card-content {
+    font-size: 1.1em;
+    line-height: 1.5;
+    text-align: center;
+    white-space: pre-wrap; /* Preserva quebras de linha */
+    margin-bottom: 10px;
+}
+
+#close-card-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #6a0572; /* Roxo */
+    color: white;
+    border-radius: 30px;
+}
+
+#close-card-button:hover {
+    background-color: #4a0050;
+}
+
+/* Esconder elementos */
+.hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}

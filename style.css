@@ -90,7 +90,7 @@ button:hover {
     background-size: cover;
     border-radius: 50%;
     background-image: url('https://em-content.zobj.net/source/apple/354/red-heart_2764-fe0f.png'); /* Coração vermelho, você pode trocar! */
-    box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.6);
     transition: transform 0.05s linear; /* Para um movimento mais suave */
 }
 
@@ -126,7 +126,7 @@ button:hover {
 /* Carta */
 #card-container {
     position: relative;
-    width: 280px;
+    width: 330px;
     height: 300px;
     perspective: 1000px; /* Para a animação 3D da carta */
 }

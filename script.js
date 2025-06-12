@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Flag para controlar se o jogo está ativo (game state)
     let isGameActive = false;
     // Flag para controlar se o paddle está sendo arrastado (dragging state)
-    let isDraggingPaddle = false;
+    let isPaddleBeingDragged = false;
 
 
     // Funções do Jogo
@@ -54,9 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Resetar a posição do emoji e da plataforma
     function resetEmojiAndPaddle() {
         emojiX = gameArea.clientWidth / 2 - EMOJI_SIZE / 2;
-        // --- MUDANÇA AQUI: Emoji começa mais acima ---
         emojiY = gameArea.clientHeight * 0.2; // Começa a 20% do topo da área do jogo
-        // --- FIM DA MUDANÇA ---
 
         paddleX = gameArea.clientWidth / 2 - PADDLE_WIDTH / 2;
 
@@ -66,12 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Mover a plataforma com o dedo/mouse
+    // Esta função é chamada apenas pelo pointermove do document, que já verifica isPaddleBeingDragged
     function movePaddle(event) {
-        // Não precisamos verificar isGameActive aqui, pois isDraggingPaddle já garante isso
-        // isDraggingPaddle é true apenas quando o jogo está ativo e o ponteiro está pressionado
-        
         // Posição X do centro da plataforma em relação à tela
-        // Usamos event.clientX para a posição horizontal do ponteiro
         let newPaddleX = event.clientX - gameArea.getBoundingClientRect().left - PADDLE_WIDTH / 2;
 
         // Limita a plataforma dentro da área do jogo
@@ -129,8 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (emojiY + EMOJI_SIZE > gameArea.clientHeight) {
             clearInterval(gameInterval);
             isGameActive = false; // Jogo não está mais ativo
+            isPaddleBeingDragged = false; // Garante que o arrasto pare
 
-            // BUG FIX: Não chamar showLoveMessage aqui, apenas game over
             alert('Ops! O coração caiu... Mas não se preocupe, o amor continua! Clique em OK para tentar novamente.');
 
             // Volta para a tela inicial
@@ -161,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameArea.classList.add('hidden');
         loveMessageScreen.classList.remove('hidden');
         loveMessageScreen.classList.add('visible');
+        isPaddleBeingDragged = false; // Garante que o arrasto pare
 
         // Animação da pontuação descendo e aumentando
         scoreDisplay.style.position = 'absolute';
@@ -244,35 +240,6 @@ Feliz dia dos namorados meu amor❤️
             // O jogo estará pronto para ser iniciado novamente
         }, 600); // Espera a animação de fechamento da carta
     });
-
-    // --- MUDANÇA IMPORTANTE: Event Listeners para controle da plataforma (GLOBAL) ---
-    // Adicionamos os listeners para a área do jogo (gameArea)
-    gameArea.addEventListener('pointerdown', (e) => {
-        // Verifica se o clique/toque inicial foi na área da plataforma para começar a arrastar
-        const rect = paddle.getBoundingClientRect();
-        // Permite o arrasto se o toque iniciar na plataforma OU se já estiver arrastando (para capturas perdidas)
-        if (isGameActive && (isDraggingPaddle || (e.clientX >= rect.left && e.clientX <= rect.right &&
-            e.clientY >= rect.top && e.clientY <= rect.bottom))) {
-            isDraggingPaddle = true;
-            paddle.setPointerCapture(e.pointerId);
-        }
-    });
-
-    gameArea.addEventListener('pointerup', (e) => {
-        isDraggingPaddle = false;
-        if (paddle.hasPointerCapture(e.pointerId)) {
-            paddle.releasePointerCapture(e.pointerId);
-        }
-    });
-
-    // Este listener é global para o gameArea, mas a função movePaddle só agirá se isDraggingPaddle for true
-    gameArea.addEventListener('pointermove', (e) => {
-        if (isDraggingPaddle) {
-            movePaddle(e);
-        }
-    });
-    // --- FIM DA MUDANÇA IMPORTANTE ---
-
 
     // Event Listeners para iniciar o jogo
     startButton.addEventListener('click', startGame);

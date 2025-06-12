@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const EMOJI_SIZE = 50;
     const TARGET_SCORE = 10; // Pontuação para parar o jogo
 
-    // Flag para controlar se o jogo está ativo e pode receber movimentos (game state)
+    // Flag para controlar se o jogo está ativo (game state)
     let isGameActive = false;
     // Flag para controlar se o paddle está sendo arrastado (dragging state)
     let isDraggingPaddle = false;
@@ -129,9 +129,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (emojiY + EMOJI_SIZE > gameArea.clientHeight) {
             clearInterval(gameInterval);
             isGameActive = false; // Jogo não está mais ativo
+
+            // BUG FIX: Não chamar showLoveMessage aqui, apenas game over
             alert('Ops! O coração caiu... Mas não se preocupe, o amor continua! Clique em OK para tentar novamente.');
-            startScreen.classList.remove('hidden');
+
+            // Volta para a tela inicial
             gameArea.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+
+            // Resetar o estado da pontuação para o próximo jogo
+            score = 0; // Zera a pontuação
+            scoreDisplay.textContent = score; // Atualiza o display
+
+            // Garante que o display da pontuação esteja no lugar certo para o próximo jogo
+            scoreDisplay.style.position = 'absolute';
+            scoreDisplay.style.top = '20px';
+            scoreDisplay.style.left = 'auto';
+            scoreDisplay.style.transform = 'none';
+            scoreDisplay.style.fontSize = '3em';
+            scoreDisplay.classList.remove('hidden');
+            return; // Sai da função gameLoop para não processar mais nada
         }
 
         // Atualiza a posição do emoji no DOM
@@ -200,21 +217,31 @@ Feliz dia dos namorados meu amor❤️
     closeCardButton.addEventListener('click', () => {
         cardContainer.classList.remove('open');
         setTimeout(() => {
-            // Poderia redirecionar ou reiniciar o jogo aqui, se quiser
-            // Por enquanto, apenas esconde a tela da mensagem e mostra a inicial
+            // Esconde a tela da mensagem e mostra a tela inicial
             loveMessageScreen.classList.add('hidden');
             startScreen.classList.remove('hidden');
+
+            // Resetar o estado da pontuação, infinito e carta para o próximo jogo
+            score = 0; // Zera a pontuação para o próximo jogo
+            scoreDisplay.textContent = score; // Atualiza o display da pontuação
             scoreDisplay.style.position = 'absolute'; // Volta a posição original da pontuação
             scoreDisplay.style.top = '20px';
             scoreDisplay.style.left = 'auto';
             scoreDisplay.style.transform = 'none';
             scoreDisplay.style.fontSize = '3em';
-            scoreDisplay.classList.remove('hidden'); // Garante que a pontuação esteja visível para o próximo jogo
-            infiniteScoreDisplay.textContent = '0'; // Reseta o infinito
-            infiniteScoreDisplay.classList.add('hidden'); // Esconde o infinito
+            scoreDisplay.classList.remove('hidden'); // Garante que a pontuação esteja visível
+
+            infiniteScoreDisplay.textContent = '0'; // Reseta o texto do infinito
+            infiniteScoreDisplay.classList.add('hidden'); // Esconde o display do infinito
+
             cardContainer.classList.remove('visible'); // Esconde a carta
             cardContainer.style.opacity = 0;
             cardContainer.style.pointerEvents = 'none';
+
+            // Garante que o botão de início seja clicável novamente
+            startButton.style.pointerEvents = 'auto';
+
+            // O jogo estará pronto para ser iniciado novamente
         }, 600); // Espera a animação de fechamento da carta
     });
 
@@ -223,17 +250,16 @@ Feliz dia dos namorados meu amor❤️
     gameArea.addEventListener('pointerdown', (e) => {
         // Verifica se o clique/toque inicial foi na área da plataforma para começar a arrastar
         const rect = paddle.getBoundingClientRect();
-        if (e.clientX >= rect.left && e.clientX <= rect.right &&
-            e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        // Permite o arrasto se o toque iniciar na plataforma OU se já estiver arrastando (para capturas perdidas)
+        if (isGameActive && (isDraggingPaddle || (e.clientX >= rect.left && e.clientX <= rect.right &&
+            e.clientY >= rect.top && e.clientY <= rect.bottom))) {
             isDraggingPaddle = true;
-            // Captura o ponteiro para que o movimento continue mesmo se sair da área da plataforma
             paddle.setPointerCapture(e.pointerId);
         }
     });
 
     gameArea.addEventListener('pointerup', (e) => {
         isDraggingPaddle = false;
-        // Libera a captura do ponteiro
         if (paddle.hasPointerCapture(e.pointerId)) {
             paddle.releasePointerCapture(e.pointerId);
         }

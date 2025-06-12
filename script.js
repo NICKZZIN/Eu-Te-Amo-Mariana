@@ -64,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Mover a plataforma com o dedo/mouse
-    // Esta função é chamada pelos listeners de pointermove e pointerdown
     function movePaddle(event) {
         // Posição X do centro da plataforma em relação à tela
         let newPaddleX = event.clientX - gameArea.getBoundingClientRect().left - PADDLE_WIDTH / 2;
@@ -214,7 +213,8 @@ Feliz dia dos namorados meu amor❤️
         cardContainer.classList.remove('open');
         setTimeout(() => {
             // Esconde a tela da mensagem e mostra a tela inicial
-            loveMessageScreen.classList.add('hidden');
+            loveMessageScreen.classList.add('hidden'); // Esconde a tela principal da mensagem
+            loveMessageScreen.classList.remove('visible'); // Remove a classe de visibilidade
             startScreen.classList.remove('hidden');
 
             // Resetar o estado da pontuação, infinito e carta para o próximo jogo
@@ -242,7 +242,7 @@ Feliz dia dos namorados meu amor❤️
     });
 
 
-    // --- NOVA LÓGICA DE CONTROLE DA PLATAFORMA ---
+    // --- LÓGICA DE CONTROLE DA PLATAFORMA ---
     // Listener para quando o ponteiro (mouse ou dedo) é pressionado na ÁREA DO JOGO
     gameArea.addEventListener('pointerdown', (e) => {
         if (isGameActive) { // Só permite arrastar se o jogo estiver ativo
@@ -273,7 +273,7 @@ Feliz dia dos namorados meu amor❤️
             }
         }
     });
-    // --- FIM DA NOVA LÓGICA DE CONTROLE ---
+    // --- FIM DA LÓGICA DE CONTROLE ---
 
 
     // Event Listeners para iniciar o jogo

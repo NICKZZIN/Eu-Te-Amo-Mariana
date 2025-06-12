@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Elementos do DOM
     const gameContainer = document.getElementById('game-container');
     const startScreen = document.getElementById('start-screen');
-    const startButton = document.getElementById('start-button');
+    const startButton = document.getElementById('startButton'); // Verifique se o ID está correto
     const gameArea = document.getElementById('game-area');
     const scoreDisplay = document.getElementById('score');
     const emoji = document.getElementById('emoji');
@@ -31,6 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const EMOJI_SIZE = 50;
     const TARGET_SCORE = 10; // Pontuação para parar o jogo
 
+    // Flag para saber se o jogo está ativo e pode receber movimentos
+    let isGameActive = false;
+
     // Funções do Jogo
 
     // Iniciar o Jogo
@@ -41,18 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
         score = 0;
         scoreDisplay.textContent = score;
         resetEmojiAndPaddle();
+        isGameActive = true; // Jogo ativo, pode receber movimentos
         gameInterval = setInterval(gameLoop, 20); // Atualiza a cada 20ms
-
-        // Event listeners para o controle da plataforma
-        gameArea.addEventListener('pointerdown', (e) => {
-            gameArea.setPointerCapture(e.pointerId); // Captura o ponteiro para seguir fora da área
-            gameArea.addEventListener('pointermove', movePaddle);
-        });
-
-        gameArea.addEventListener('pointerup', (e) => {
-            gameArea.releasePointerCapture(e.pointerId); // Libera o ponteiro
-            gameArea.removeEventListener('pointermove', movePaddle);
-        });
     }
 
     // Resetar a posição do emoji e da plataforma
@@ -68,6 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mover a plataforma com o dedo/mouse
     function movePaddle(event) {
+        if (!isGameActive) return; // Só move se o jogo estiver ativo
+
         // Posição X do centro da plataforma em relação à tela
         let newPaddleX = event.clientX - gameArea.getBoundingClientRect().left - PADDLE_WIDTH / 2;
 
@@ -117,8 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Verifica a pontuação para a transição
             if (score >= TARGET_SCORE) {
                 clearInterval(gameInterval); // Para o jogo
-                // AQUI: CORREÇÃO PARA REMOVER O LISTENER CORRETAMENTE
-                gameArea.removeEventListener('pointermove', movePaddle);
+                isGameActive = false; // Jogo não está mais ativo
                 showLoveMessage();
             }
         }
@@ -126,8 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Se o emoji cair (game over)
         if (emojiY + EMOJI_SIZE > gameArea.clientHeight) {
             clearInterval(gameInterval);
-            // AQUI: CORREÇÃO PARA REMOVER O LISTENER CORRETAMENTE
-            gameArea.removeEventListener('pointermove', movePaddle);
+            isGameActive = false; // Jogo não está mais ativo
             alert('Ops! O coração caiu... Mas não se preocupe, o amor continua! Clique em OK para tentar novamente.');
             startScreen.classList.remove('hidden');
             gameArea.classList.add('hidden');
@@ -216,6 +209,21 @@ Feliz dia dos namorados meu amor❤️
             cardContainer.style.pointerEvents = 'none';
         }, 600); // Espera a animação de fechamento da carta
     });
+
+    // --- MUDANÇA IMPORTANTE AQUI ---
+    // Adicionamos os listeners de pointer globalmente e controlamos com a flag isGameActive
+    gameArea.addEventListener('pointerdown', (e) => {
+        gameArea.setPointerCapture(e.pointerId); // Captura o ponteiro
+        // Adiciona o listener de movimento APENAS quando o ponteiro está pressionado
+        gameArea.addEventListener('pointermove', movePaddle);
+    });
+
+    gameArea.addEventListener('pointerup', (e) => {
+        gameArea.releasePointerCapture(e.pointerId); // Libera o ponteiro
+        // Remove o listener de movimento quando o ponteiro é solto
+        gameArea.removeEventListener('pointermove', movePaddle);
+    });
+    // --- FIM DA MUDANÇA IMPORTANTE ---
 
 
     // Event Listeners
